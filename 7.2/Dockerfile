@@ -1,7 +1,5 @@
 FROM php:7.2-alpine
 
-LABEL maintainer="VIVAMERA"
-
 ENV XDEBUG_VERSION="2.6.0"
 ENV JPEGOPTIM_URL="https://github.com/tjko/jpegoptim/archive/RELEASE.1.4.4.tar.gz"
 ENV OPTIPNG_URL="https://downloads.sourceforge.net/project/optipng/OptiPNG/optipng-0.7.7/optipng-0.7.7.tar.gz"

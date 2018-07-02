@@ -1,6 +1,7 @@
 # VIVAMERA php docker image
 
 [![Build Status](https://travis-ci.com/vivamera/docker-hub-php.svg?branch=master)](https://travis-ci.com/vivamera/docker-hub-php)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f4159283450f40bbbc0ea8b3c67bf6a4)](https://www.codacy.com/app/vivamera/docker-hub-php?utm_source=github.com&utm_medium=referral&utm_content=vivamera/docker-hub-php&utm_campaign=Badge_Grade)
 
 This repository provides a docker image for `PHP` with is based upon `php alpine`.
 
@@ -34,7 +35,7 @@ To build the image run the following command:
 
 ```bash
 $ docker build \
-    --tag vivamera-php \
+    --tag vivamera/php \
     7.2
 ```
 
@@ -47,9 +48,8 @@ $ docker run \
     --rm \
     --interactive \
     --tty \
-    --volume="$(PWD):/app" \
-    --workdir="/app" \
-    vivamera-php
+    --volume "${PWD}":/app \
+    vivamera/php
 ```
 
 To use the image with xdebug enabled, add the following option `-d zend_extension=xdebug.so`
