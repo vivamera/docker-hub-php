@@ -11,13 +11,13 @@ This image provides the following extensions:
 - redis
 - xdebug
 
-And provides the following binaries for image optimizations:
+The following binaries for image optimizations will be provided:
 - jpegoptim (https://github.com/tjko/jpegoptim)
 - optipng (https://downloads.sourceforge.net/project/optipng/OptiPNG)
 - pngquant (http://pngquant.org)
 - gifsicle (https://github.com/kohler/gifsicle)
 
-And it also provides the following configurations for:
+The image provides configuration for:
 - [php](https://github.com/vivamera/docker-hub-php/tree/master/7.2/etc/php)
 - [openssl](https://github.com/vivamera/docker-hub-php/tree/master/7.2/etc/ssl)
 
