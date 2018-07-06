@@ -1,7 +1,7 @@
 # PHP
 [![Build Status](https://travis-ci.com/vivamera/docker-hub-php.svg?branch=master)](https://travis-ci.com/vivamera/docker-hub-php) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f4159283450f40bbbc0ea8b3c67bf6a4)](https://www.codacy.com/app/vivamera/docker-hub-php?utm_source=github.com&utm_medium=referral&utm_content=vivamera/docker-hub-php&utm_campaign=Badge_Grade) 
 
-This is a image for `PHP` witch is based upon `php alpine`.
+This is a image for `PHP` witch is based upon `alpine php`.
 
 This image provides the following extensions:
 - bcmath
@@ -17,26 +17,33 @@ The following binaries for image optimizations will be provided:
 - pngquant (http://pngquant.org)
 - gifsicle (https://github.com/kohler/gifsicle)
 
-The image provides configuration for:
-- [php](https://github.com/vivamera/docker-hub-php/tree/master/7.2/etc/php)
-- [openssl](https://github.com/vivamera/docker-hub-php/tree/master/7.2/etc/ssl)
-
 ## Supported tags and respective Dockerfile links
 * `7.2`, `latest` [(7.2/Dockerfile)](https://github.com/vivamera/docker-hub-php/blob/master/7.2/Dockerfile)
 
 ## How to use this image
-For PHP projects run through the command line interface (CLI), you can do the following.
+For PHP projects run through the command line interface (CLI), you can run the following.
 
-```bash 
+```bash
 $ docker run \
     --rm \
     --interactive \
     --tty \
+    --workdir /app \
     --volume "$(pwd)":/app \
     vivamera/php my-php-script.php
 ```
 
-To use the image with xdebug enabled, add the following option `-d zend_extension=xdebug.so`
+To use the image with **xdebug** enabled, add the following `php` option `-d zend_extension=xdebug.so`, as example run the following.
+
+```bash
+$ docker run \
+    --rm \
+    --interactive \
+    --tty \
+    --workdir /app \
+    --volume "$(pwd)":/app \
+    vivamera/php -d zend_extension=xdebug.so my-php-script.php
+```
 
 ## Quick reference
 * **Where to get help:**
