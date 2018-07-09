@@ -1,18 +1,16 @@
 FROM php:7.2-alpine
 
-ENV XDEBUG_VERSION="2.6.0"
-ENV JPEGOPTIM_URL="https://github.com/tjko/jpegoptim/archive/RELEASE.1.4.4.tar.gz"
-ENV OPTIPNG_URL="https://downloads.sourceforge.net/project/optipng/OptiPNG/optipng-0.7.7/optipng-0.7.7.tar.gz"
-ENV PNGQUANT_URL="http://pngquant.org/pngquant-2.11.4-src.tar.gz"
-ENV GIFSICLE_URL="https://github.com/kohler/gifsicle/archive/v1.90.tar.gz"
+ENV XDEBUG_VERSION 2.6.0
+ENV JPEGOPTIM_URL https://github.com/tjko/jpegoptim/archive/RELEASE.1.4.4.tar.gz
+ENV OPTIPNG_URL https://downloads.sourceforge.net/project/optipng/OptiPNG/optipng-0.7.7/optipng-0.7.7.tar.gz
+ENV PNGQUANT_URL http://pngquant.org/pngquant-2.11.4-src.tar.gz
+ENV GIFSICLE_URL https://github.com/kohler/gifsicle/archive/v1.90.tar.gz
 
+# Install build dependencies
 RUN apk add --no-cache --virtual .build-deps \
     ${PHPIZE_DEPS} \
     automake \
-    bash
-
-# Install persistent dependencies
-RUN apk add --no-cache --virtual .persistent-deps \
+    bash \
     icu-dev \
     postgresql-dev \
     libjpeg-turbo-dev \
@@ -31,6 +29,7 @@ RUN set -xe \
     && docker-php-ext-enable \
         redis
 
+# Install jpegoptim
 RUN set -xe \
     && mkdir -p /usr/src /tmp/jpegoptim \
     && wget -O /usr/src/jpegoptim.tar.gz "${JPEGOPTIM_URL}" \
@@ -44,6 +43,7 @@ RUN set -xe \
     && rm -f /usr/src/jpegoptim.tar.gz \
     && rm -rf /tmp/jpegoptim
 
+# Install optipng
 RUN set -xe \
     && mkdir -p /usr/src /tmp/optipng \
     && wget -O /usr/src/optipng.tar.gz "${OPTIPNG_URL}" \
@@ -56,6 +56,7 @@ RUN set -xe \
     && rm -f /usr/src/optipng.tar.gz \
     && rm -rf /tmp/optipng
 
+# Install pngquant
 RUN set -xe \
     && mkdir -p /usr/src /tmp/pngquant \
     && wget -O /usr/src/pngquant.tar.gz "${PNGQUANT_URL}" \
@@ -68,6 +69,7 @@ RUN set -xe \
     && rm -f /usr/src/pngquant.tar.gz \
     && rm -rf /tmp/pngquant
 
+# Install gifsicle
 RUN set -xe \
     && mkdir -p /usr/src /tmp/gifsicle \
     && wget -O /usr/src/gifsicle.tar.gz "${GIFSICLE_URL}" \
@@ -81,13 +83,14 @@ RUN set -xe \
     && rm -f /usr/src/gifsicle.tar.gz \
     && rm -rf /tmp/gifsicle
 
-RUN apk del .build-deps
-
-COPY etc/php/conf.d/* "${PHP_INI_DIR}"/conf.d/
-COPY etc/ssl/openssl.cnf /etc/ssl/
-
-WORKDIR /app
-
-ENTRYPOINT [ "php" ]
-
-CMD [ "-a" ]
+# Install persistent deps and remove uninstall build deps
+RUN apk add --no-cache --virtual .persistent-deps \
+    libjpeg-turbo \
+    libpng \
+    $( \
+        scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
+        | tr ',' '\n' \
+        | sort -u \
+        | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+    ) \
+    && apk del .build-deps
