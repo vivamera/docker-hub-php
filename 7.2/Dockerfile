@@ -1,4 +1,4 @@
-FROM php:7.2-alpine
+FROM php:7.2-cli-alpine3.7
 
 ENV XDEBUG_VERSION 2.6.0
 ENV JPEGOPTIM_URL https://github.com/tjko/jpegoptim/archive/RELEASE.1.4.4.tar.gz
@@ -6,15 +6,21 @@ ENV OPTIPNG_URL https://downloads.sourceforge.net/project/optipng/OptiPNG/optipn
 ENV PNGQUANT_URL http://pngquant.org/pngquant-2.11.4-src.tar.gz
 ENV GIFSICLE_URL https://github.com/kohler/gifsicle/archive/v1.90.tar.gz
 
+# Install phpize build dependencies
+# hadolint ignore=SC2086,DL3018
+RUN apk add --no-cache --virtual .phpize-build-deps \
+    ${PHPIZE_DEPS}
+
 # Install build dependencies
 RUN apk add --no-cache --virtual .build-deps \
-    ${PHPIZE_DEPS} \
-    automake \
-    bash \
-    icu-dev \
-    postgresql-dev \
-    libjpeg-turbo-dev \
-    libpng-dev
+    automake=1.15.1-r0 \
+    bash=4.4.19-r1 \
+    icu-dev=59.1-r1 \
+    postgresql-dev=10.4-r0 \
+    libjpeg-turbo-dev=1.5.2-r0 \
+    libpng-dev=1.6.34-r1
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Build
 RUN set -xe \
@@ -30,6 +36,7 @@ RUN set -xe \
         redis
 
 # Install jpegoptim
+# hadolint ignore=DL3003
 RUN set -xe \
     && mkdir -p /usr/src /tmp/jpegoptim \
     && wget -O /usr/src/jpegoptim.tar.gz "${JPEGOPTIM_URL}" \
@@ -44,6 +51,7 @@ RUN set -xe \
     && rm -rf /tmp/jpegoptim
 
 # Install optipng
+# hadolint ignore=DL3003
 RUN set -xe \
     && mkdir -p /usr/src /tmp/optipng \
     && wget -O /usr/src/optipng.tar.gz "${OPTIPNG_URL}" \
@@ -57,6 +65,7 @@ RUN set -xe \
     && rm -rf /tmp/optipng
 
 # Install pngquant
+# hadolint ignore=DL3003
 RUN set -xe \
     && mkdir -p /usr/src /tmp/pngquant \
     && wget -O /usr/src/pngquant.tar.gz "${PNGQUANT_URL}" \
@@ -70,6 +79,7 @@ RUN set -xe \
     && rm -rf /tmp/pngquant
 
 # Install gifsicle
+# hadolint ignore=DL3003
 RUN set -xe \
     && mkdir -p /usr/src /tmp/gifsicle \
     && wget -O /usr/src/gifsicle.tar.gz "${GIFSICLE_URL}" \
@@ -83,14 +93,20 @@ RUN set -xe \
     && rm -f /usr/src/gifsicle.tar.gz \
     && rm -rf /tmp/gifsicle
 
-# Install persistent deps and remove uninstall build deps
+# Install persistent deps
 RUN apk add --no-cache --virtual .persistent-deps \
-    libjpeg-turbo \
-    libpng \
+    libjpeg-turbo=1.5.2-r0 \
+    libpng=1.6.34-r1
+
+# Install persistant library dependencies
+# hadolint ignore=SC2046,DL3018
+RUN apk add --no-cache --virtual .persistent-lib-deps \
     $( \
         scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
         | tr ',' '\n' \
         | sort -u \
         | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-    ) \
-    && apk del .build-deps
+    )
+
+# Remove build dependencies
+RUN apk del .phpize-build-deps .build-deps
