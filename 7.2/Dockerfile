@@ -1,10 +1,10 @@
 FROM php:7.2-cli-alpine3.7
 
 ENV XDEBUG_VERSION 2.6.0
-ENV JPEGOPTIM_URL https://github.com/tjko/jpegoptim/archive/RELEASE.1.4.4.tar.gz
+ENV JPEGOPTIM_URL https://github.com/tjko/jpegoptim/archive/RELEASE.1.4.6.tar.gz
 ENV OPTIPNG_URL https://downloads.sourceforge.net/project/optipng/OptiPNG/optipng-0.7.7/optipng-0.7.7.tar.gz
-ENV PNGQUANT_URL http://pngquant.org/pngquant-2.11.4-src.tar.gz
-ENV GIFSICLE_URL https://github.com/kohler/gifsicle/archive/v1.90.tar.gz
+ENV PNGQUANT_URL http://pngquant.org/pngquant-2.12.0-src.tar.gz
+ENV GIFSICLE_URL https://github.com/kohler/gifsicle/archive/v1.91.tar.gz
 
 # Install phpize build dependencies
 # hadolint ignore=SC2086,DL3018
@@ -20,11 +20,10 @@ RUN apk add --no-cache --virtual .build-deps \
     libjpeg-turbo-dev=1.5.2-r0 \
     libpng-dev=1.6.34-r1
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+SHELL ["/bin/bash", "-o", "pipefail", "-e", "-x", "-c"]
 
 # Build
-RUN set -xe \
-    && docker-php-ext-install \
+RUN docker-php-ext-install \
         bcmath \
         gd \
         intl \
@@ -36,62 +35,44 @@ RUN set -xe \
         redis
 
 # Install jpegoptim
-# hadolint ignore=DL3003
-RUN set -xe \
-    && mkdir -p /usr/src /tmp/jpegoptim \
-    && wget -O /usr/src/jpegoptim.tar.gz "${JPEGOPTIM_URL}" \
-    && tar -xzf /usr/src/jpegoptim.tar.gz -C /tmp/jpegoptim --strip-components 1 \
-    && cd /tmp/jpegoptim \
+WORKDIR /usr/src/jpegoptim
+
+RUN curl -sSL "${JPEGOPTIM_URL}" | tar -xz -C /usr/src/jpegoptim --strip-components 1 \
     && ./configure \
     && make \
     && make strip \
     && make install \
-    && cd /tmp \
-    && rm -f /usr/src/jpegoptim.tar.gz \
-    && rm -rf /tmp/jpegoptim
+    && rm -rf /usr/src/jpegoptim
 
 # Install optipng
-# hadolint ignore=DL3003
-RUN set -xe \
-    && mkdir -p /usr/src /tmp/optipng \
-    && wget -O /usr/src/optipng.tar.gz "${OPTIPNG_URL}" \
-    && tar -xzf /usr/src/optipng.tar.gz -C /tmp/optipng --strip-components 1 \
-    && cd /tmp/optipng \
+WORKDIR /usr/src/optipng
+
+RUN curl -sSL "${OPTIPNG_URL}" | tar -xz -C /usr/src/optipng --strip-components 1 \
     && ./configure \
     && make \
     && make install \
-    && cd /tmp \
-    && rm -f /usr/src/optipng.tar.gz \
-    && rm -rf /tmp/optipng
+    && rm -rf /usr/src/optipng
 
 # Install pngquant
-# hadolint ignore=DL3003
-RUN set -xe \
-    && mkdir -p /usr/src /tmp/pngquant \
-    && wget -O /usr/src/pngquant.tar.gz "${PNGQUANT_URL}" \
-    && tar -xzf /usr/src/pngquant.tar.gz -C /tmp/pngquant --strip-components 1 \
-    && cd /tmp/pngquant \
+WORKDIR /usr/src/pngquant
+
+RUN curl -sSL "${PNGQUANT_URL}" | tar -xz -C /usr/src/pngquant --strip-components 1 \
     && ./configure \
     && make \
     && make install \
-    && cd /tmp \
-    && rm -f /usr/src/pngquant.tar.gz \
-    && rm -rf /tmp/pngquant
+    && rm -rf /usr/src/pngquant
 
 # Install gifsicle
-# hadolint ignore=DL3003
-RUN set -xe \
-    && mkdir -p /usr/src /tmp/gifsicle \
-    && wget -O /usr/src/gifsicle.tar.gz "${GIFSICLE_URL}" \
-    && tar -xzf /usr/src/gifsicle.tar.gz -C /tmp/gifsicle --strip-components 1 \
-    && cd /tmp/gifsicle \
+WORKDIR /usr/src/gifsicle
+
+RUN curl -sSL "${GIFSICLE_URL}" | tar -xz -C /usr/src/gifsicle --strip-components 1 \
     && autoreconf -i \
     && ./configure \
     && make \
     && make install \
-    && cd /tmp \
-    && rm -f /usr/src/gifsicle.tar.gz \
-    && rm -rf /tmp/gifsicle
+    && rm -rf /usr/src/gifsicle
+
+WORKDIR /app
 
 # Install persistent deps
 RUN apk add --no-cache --virtual .persistent-deps \
