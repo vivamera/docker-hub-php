@@ -9,6 +9,7 @@ This image provides the following extensions:
 - intl
 - pdo_pgsql
 - redis
+- grpc
 - xdebug
 
 The following binaries for image optimizations will be provided:
