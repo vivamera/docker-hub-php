@@ -29,9 +29,11 @@ RUN docker-php-ext-install \
         intl \
         pdo_pgsql \
     && pecl install \
+        grpc \
         redis \
         xdebug-"${XDEBUG_VERSION}" \
     && docker-php-ext-enable \
+        grpc \
         redis
 
 # Install jpegoptim
