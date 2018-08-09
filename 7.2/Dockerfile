@@ -1,6 +1,6 @@
 FROM php:7.2-cli-alpine3.7
 
-ENV XDEBUG_VERSION 2.6.0
+ENV XDEBUG_VERSION 2.6.1
 ENV JPEGOPTIM_URL https://github.com/tjko/jpegoptim/archive/RELEASE.1.4.6.tar.gz
 ENV OPTIPNG_URL https://downloads.sourceforge.net/project/optipng/OptiPNG/optipng-0.7.7/optipng-0.7.7.tar.gz
 ENV PNGQUANT_URL http://pngquant.org/pngquant-2.12.0-src.tar.gz
