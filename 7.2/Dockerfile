@@ -16,7 +16,7 @@ RUN apk add --no-cache --virtual .build-deps \
     automake=1.15.1-r0 \
     bash=4.4.19-r1 \
     icu-dev=59.1-r1 \
-    postgresql-dev=10.4-r0 \
+    postgresql-dev=10.5-r0 \
     libjpeg-turbo-dev=1.5.2-r0 \
     libpng-dev=1.6.34-r1
 
