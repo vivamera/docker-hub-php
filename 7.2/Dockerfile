@@ -1,4 +1,4 @@
-FROM php:7.2-cli-alpine3.7
+FROM php:7.2-cli-alpine3.8
 
 ENV XDEBUG_VERSION 2.6.1
 ENV JPEGOPTIM_URL https://github.com/tjko/jpegoptim/archive/RELEASE.1.4.6.tar.gz
@@ -13,11 +13,11 @@ RUN apk add --no-cache --virtual .phpize-build-deps \
 
 # Install build dependencies
 RUN apk add --no-cache --virtual .build-deps \
-    automake=1.15.1-r0 \
+    automake=1.16.1-r0 \
     bash=4.4.19-r1 \
-    icu-dev=59.1-r1 \
+    icu-dev=60.2-r2 \
     postgresql-dev=10.5-r0 \
-    libjpeg-turbo-dev=1.5.2-r0 \
+    libjpeg-turbo-dev=1.5.3-r3 \
     libpng-dev=1.6.34-r1
 
 SHELL ["/bin/bash", "-o", "pipefail", "-e", "-x", "-c"]
@@ -78,7 +78,7 @@ WORKDIR /app
 
 # Install persistent deps
 RUN apk add --no-cache --virtual .persistent-deps \
-    libjpeg-turbo=1.5.2-r0 \
+    libjpeg-turbo=1.5.3-r3 \
     libpng=1.6.34-r1
 
 # Install persistant library dependencies
@@ -92,4 +92,4 @@ RUN apk add --no-cache --virtual .persistent-lib-deps \
     )
 
 # Remove build dependencies
-RUN apk del .phpize-build-deps .build-deps
+RUN apk del --purge .phpize-build-deps .build-deps
