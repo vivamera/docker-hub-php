@@ -17,7 +17,7 @@ RUN apk add --no-cache --virtual .build-deps \
     bash=4.4.19-r1 \
     icu-dev=60.2-r2 \
     postgresql-dev=10.5-r0 \
-    libjpeg-turbo-dev=1.5.3-r3 \
+    libjpeg-turbo-dev=1.5.3-r4 \
     libpng-dev=1.6.34-r1
 
 SHELL ["/bin/bash", "-o", "pipefail", "-e", "-x", "-c"]
@@ -78,7 +78,7 @@ WORKDIR /app
 
 # Install persistent deps
 RUN apk add --no-cache --virtual .persistent-deps \
-    libjpeg-turbo=1.5.3-r3 \
+    libjpeg-turbo=1.5.3-r4 \
     libpng=1.6.34-r1
 
 # Install persistant library dependencies
@@ -93,3 +93,5 @@ RUN apk add --no-cache --virtual .persistent-lib-deps \
 
 # Remove build dependencies
 RUN apk del --purge .phpize-build-deps .build-deps
+
+SHELL ["/bin/sh", "-c"]
