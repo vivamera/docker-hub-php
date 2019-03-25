@@ -1,5 +1,5 @@
 # PHP
-[![Build Status](https://travis-ci.com/vivamera/docker-hub-php.svg?branch=master)](https://travis-ci.com/vivamera/docker-hub-php) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f4159283450f40bbbc0ea8b3c67bf6a4)](https://www.codacy.com/app/vivamera/docker-hub-php?utm_source=github.com&utm_medium=referral&utm_content=vivamera/docker-hub-php&utm_campaign=Badge_Grade) 
+[![Build Status](https://circleci.com/gh/vivamera/docker-hub-php.svg?style=svg)](https://circleci.com/gh/vivamera/docker-hub-php)
 
 This is a image for `PHP` witch is based upon `alpine php`.
 
